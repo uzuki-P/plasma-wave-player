@@ -36,6 +36,7 @@ PlasmoidItem {
     PlayerSource {
         id: player
         preferredIdentity: root.cfg.lastPlayer
+        fastPoll: root.expanded
         onPreferredIdentityChanged: root.cfg.lastPlayer = preferredIdentity
     }
 
