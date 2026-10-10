@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "bandit@uzuki-p.my.id",
+                "Name": "Uzuki-P"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "Now playing pill with an audio visualizer behind it",
+        "Icon": "uzuki-waveplayer",
+        "Id": "uzuki.waveplayer",
+        "License": "GPL-3.0",
+        "Name": "Wave Player",
+        "Version": "0.1.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

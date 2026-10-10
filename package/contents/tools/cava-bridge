@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""Run CAVA and stream its raw ASCII frames to the Wave Player widget.
+
+Usage: cava-bridge <websocket-url> <token> <bars> <framerate>
+
+The widget owns the WebSocket server. When the widget closes the socket,
+or plasmashell exits, this process stops CAVA and exits too.
+"""
+
+import os
+import subprocess
+import sys
+import tempfile
+import threading
+
+from websockets.exceptions import ConnectionClosed
+from websockets.sync.client import connect
+
+
+def cava_config(bars: int, framerate: int) -> str:
+    return f"""[general]
+framerate={framerate}
+bars={bars}
+autosens=1
+sleep_timer=0
+lower_cutoff_freq=50
+higher_cutoff_freq=10000
+[output]
+method=raw
+raw_target=/dev/stdout
+data_format=ascii
+ascii_max_range=1000
+channels=mono
+mono_option=average
+[smoothing]
+noise_reduction=77
+"""
+
+
+def main() -> int:
+    url, token, bars, framerate = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
+
+    with tempfile.NamedTemporaryFile("w", prefix="waveplayer-cava-", suffix=".conf", delete=False) as config:
+        config.write(cava_config(bars, framerate))
+
+    try:
+        with connect(url, open_timeout=5) as ws:
+            ws.send(f"HELLO {token}")
+            try:
+                proc = subprocess.Popen(
+                    ["cava", "-p", config.name],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    bufsize=1,
+                )
+            except OSError as error:
+                ws.send(f"ERR {error}")
+                return 1
+
+            def watch_socket() -> None:
+                # Iterating ends when the widget closes the socket.
+                try:
+                    for _ in ws:
+                        pass
+                except ConnectionClosed:
+                    pass
+                proc.terminate()
+
+            threading.Thread(target=watch_socket, daemon=True).start()
+
+            try:
+                for line in proc.stdout:
+                    ws.send(line.strip())
+            except ConnectionClosed:
+                pass
+            finally:
+                proc.terminate()
+                proc.wait(timeout=2)
+
+            if proc.returncode not in (0, -15):
+                try:
+                    ws.send(f"ERR cava exited with {proc.returncode}: {proc.stderr.read().strip()}")
+                except ConnectionClosed:
+                    pass
+    finally:
+        os.unlink(config.name)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

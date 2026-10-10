@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <!-- 0: album art, 1: system accent -->
+    <entry name="paletteSource" type="Int">
+      <default>0</default>
+    </entry>
+    <!-- 0: palette primary, 1: rainbow -->
+    <entry name="waveColors" type="Int">
+      <default>1</default>
+    </entry>
+    <!-- 0: wave, 1: bars -->
+    <entry name="visualizerStyle" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="showVisualizer" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="barCount" type="Int">
+      <default>48</default>
+    </entry>
+    <entry name="framerate" type="Int">
+      <default>60</default>
+    </entry>
+    <entry name="panelLength" type="Int">
+      <default>360</default>
+    </entry>
+    <!-- identity of the player last picked or played -->
+    <entry name="lastPlayer" type="String">
+      <default></default>
+    </entry>
+    <!-- 0: always, 1: on hover, 2: never -->
+    <entry name="panelTextScroll" type="Int">
+      <default>1</default>
+    </entry>
+    <entry name="popupTextScroll" type="Int">
+      <default>0</default>
+    </entry>
+    <!-- pixels per second -->
+    <entry name="textScrollSpeed" type="Int">
+      <default>40</default>
+    </entry>
+    <entry name="volumeStep" type="Int">
+      <default>5</default>
+    </entry>
+  </group>
+</kcfg>
